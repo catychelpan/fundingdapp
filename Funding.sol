@@ -77,6 +77,17 @@ contract Funding {
         checkAndUpdateCampaignState();
     }
 
+    function refund() public {
+        checkAndUpdateCampaignState();
+        require(state == CampaignState.Failed, "Refunds not available.");
+        uint256 amount = backers[msg.sender].totalContribution;
+        require(amount > 0, "No contribution to refund");
+
+        backers[msg.sender].totalContribution = 0;
+        payable(msg.sender).transfer(amount);
+    }
+
+
     function addTier(
         string memory _name,
         uint256 _amount
